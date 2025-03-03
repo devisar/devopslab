@@ -14,3 +14,36 @@ ENV NAME World
 
 # Run a command to start the application
 CMD ["python3", "app.py"]
+
+
+(or) second way
+
+# Build Stage
+FROM ubuntu:latest AS builder
+
+# Set the working directory in the build stage
+WORKDIR /app
+
+# Copy only the necessary files to the build stage
+COPY . /app
+
+# Install build dependencies (python and pip)
+RUN apt-get update && apt-get install -y python3 python3-pip
+
+# Install any Python dependencies if needed (e.g., from requirements.txt)
+# RUN pip3 install -r requirements.txt   # Uncomment if you have a requirements.txt
+
+# Production Stage
+FROM ubuntu:latest
+
+# Set the working directory in the production stage
+WORKDIR /app
+
+# Copy only the necessary files from the build stage (avoiding build dependencies)
+COPY --from=builder /app /app
+
+# Set environment variables
+ENV NAME World
+
+# Run the application
+CMD ["python3", "app.py"]
