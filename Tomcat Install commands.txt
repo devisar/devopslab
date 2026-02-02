@@ -1,0 +1,35 @@
+cd /opt
+sudo wget https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.85/bin/apache-tomcat-9.0.85.tar.gz
+sudo tar -xvzf apache-tomcat-9.0.85.tar.gz
+sudo mv apache-tomcat-9.0.85 tomcat
+sudo chown -R $USER:$USER /opt/tomcat
+sudo chmod +x /opt/tomcat/bin/*.sh
+cd /opt/tomcat/bin
+./startup.sh
+
+nano /opt/tomcat/conf/tomcat-users.xml
+<tomcat-users>
+  <!-- Roles -->
+  <role rolename="manager-gui"/>
+  <role rolename="manager-script"/>
+
+  <!-- User for browser GUI -->
+  <user username="admin" password="admin123" roles="manager-gui"/>
+
+  <!-- User for Jenkins deployments -->
+  <user username="jenkins" password="jenkins123" roles="manager-script"/>
+</tomcat-users>
+
+CTRL + O → Enter → CTRL + X
+
+nano /opt/tomcat/webapps/manager/META-INF/context.xml
+<!--
+<Valve className="org.apache.catalina.valves.RemoteAddrValve"
+       allow="127\.\d+\.\d+\.\d+|::1" />
+-->
+CTRL + O → Enter → CTRL + X
+
+
+cd /opt/tomcat/bin
+./shutdown.sh
+./startup.sh
